@@ -17,8 +17,7 @@ environment:
   sdk: ^3.7.0
 
 dependencies:
-  nrel_spa:
-    path: ../nrel-spa-dart
+  nrel_spa: ^1.0.0
 
 dev_dependencies:
   lints: ^5.0.0
