@@ -12,4 +12,4 @@ export 'src/solar_ephemeris.dart';
 export 'src/msc.dart';
 export 'src/asr.dart';
 export 'src/qiyam.dart';
-export 'src/spa.dart' show getSpa;
+export 'package:nrel_spa/nrel_spa.dart' show getSpa, SpaResult, SpaAnglesResult;

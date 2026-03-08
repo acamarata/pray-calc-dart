@@ -4,7 +4,7 @@
 [![CI](https://github.com/acamarata/pray-calc-dart/actions/workflows/ci.yml/badge.svg)](https://github.com/acamarata/pray-calc-dart/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Islamic prayer times for Dart and Flutter. Pure Dart port of [pray-calc](https://github.com/acamarata/pray-calc), implementing the NREL Solar Position Algorithm, MCW seasonal model, and dynamic twilight angles. Zero dependencies.
+Islamic prayer times for Dart and Flutter. Pure Dart port of [pray-calc](https://github.com/acamarata/pray-calc), implementing the MCW seasonal model and dynamic twilight angles. Uses [nrel_spa](https://github.com/acamarata/nrel-spa-dart) for the NREL Solar Position Algorithm.
 
 ## Installation
 
@@ -87,7 +87,7 @@ Result: approximately 18 degrees at the equator, approximately 12-14 degrees at 
 
 ## Compatibility
 
-Dart SDK 3.7.0+. Works in Flutter (iOS, Android, Web, Desktop), Dart CLI, and server-side Dart. Zero external dependencies.
+Dart SDK 3.7.0+. Works in Flutter (iOS, Android, Web, Desktop), Dart CLI, and server-side Dart. Single dependency: [nrel_spa](https://pub.dev/packages/nrel_spa).
 
 ## Related
 

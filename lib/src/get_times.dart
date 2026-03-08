@@ -4,8 +4,9 @@
 /// angle algorithm. Times are in local time as determined by the UTC offset.
 library;
 
+import 'package:nrel_spa/nrel_spa.dart';
+
 import 'types.dart';
-import 'spa.dart';
 import 'solar_ephemeris.dart';
 import 'angles.dart';
 import 'asr.dart';

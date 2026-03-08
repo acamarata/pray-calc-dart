@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Replaced bundled SPA implementation with the `nrel_spa` package dependency
+- Removed `SpaResult` and `SpaAnglesResult` from local types (now re-exported from `nrel_spa`)
+
 ## [1.0.0] - 2026-03-08
 
 ### Added
