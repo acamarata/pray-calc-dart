@@ -16,5 +16,5 @@ print('Isha:    ${formatTime(times.isha)}');
 
 ## Pages
 
-- [API Reference](API-Reference) — Full function and type reference
-- [Dynamic Angle Algorithm](Dynamic-Algorithm) — Physics-grounded twilight angle computation
+- [API Reference](API-Reference): Full function and type reference
+- [Dynamic Angle Algorithm](Dynamic-Algorithm): Physics-grounded twilight angle computation
