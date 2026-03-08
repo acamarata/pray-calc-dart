@@ -19,3 +19,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Third-Party Notice
+==================
+
+The NREL Solar Position Algorithm implementation is based on:
+
+  Reda, I. and Andreas, A. (2004). Solar Position Algorithm for Solar
+  Radiation Applications. NREL/TP-560-34302.
+  DOI: 10.2172/15003974
+
+  National Renewable Energy Laboratory (NREL)
+  1617 Cole Blvd, Golden, CO 80401
+
+The original C implementation is Copyright (c) 2003-2012 NREL.
+This Dart port is an independent implementation. NREL has not endorsed
+or certified this library.
