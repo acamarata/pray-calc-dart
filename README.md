@@ -85,6 +85,10 @@ Fixed-angle methods (ISNA 15 degrees, MWL 18 degrees, etc.) produce inaccurate F
 
 Result: approximately 18 degrees at the equator, approximately 12-14 degrees at 50-55 degrees N in summer. Matches observational data from the Moonsighting Committee Worldwide.
 
+## Architecture
+
+Built in three layers: (1) [nrel_spa](https://pub.dev/packages/nrel_spa) provides the solar ephemeris foundation; (2) the MSC piecewise model computes seasonal minute offsets which are converted to depression angles via spherical trigonometry; (3) physics corrections (Earth-Sun distance, refraction, elevation dip) adjust the angle within [10°, 22°] bounds.
+
 ## Compatibility
 
 Dart SDK 3.7.0+. Works in Flutter (iOS, Android, Web, Desktop), Dart CLI, and server-side Dart. Single dependency: [nrel_spa](https://pub.dev/packages/nrel_spa).

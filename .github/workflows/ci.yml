@@ -19,7 +19,7 @@ jobs:
         with:
           sdk: ${{ matrix.dart-version }}
       - run: dart pub get
-      - run: dart analyze
+      - run: dart analyze --fatal-infos
       - run: dart test
 
   format:
