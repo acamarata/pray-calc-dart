@@ -62,14 +62,31 @@ class PrayerTimes {
 
 /// Prayer times formatted as HH:MM:SS strings.
 class FormattedPrayerTimes {
+  /// Start of the last third of the night (Qiyam al-Layl), as HH:MM:SS.
   final String qiyam;
+
+  /// True dawn (Subh Sadiq), as HH:MM:SS.
   final String fajr;
+
+  /// Astronomical sunrise, as HH:MM:SS.
   final String sunrise;
+
+  /// Solar noon (exact geometric transit), as HH:MM:SS.
   final String noon;
+
+  /// Dhuhr (2.5 minutes after solar noon), as HH:MM:SS.
   final String dhuhr;
+
+  /// Asr (Shafi'i or Hanafi shadow convention), as HH:MM:SS.
   final String asr;
+
+  /// Maghrib (sunset), as HH:MM:SS.
   final String maghrib;
+
+  /// Isha (nightfall, end of shafaq), as HH:MM:SS.
   final String isha;
+
+  /// Dynamic twilight angles used for this calculation.
   final TwilightAngles angles;
 
   const FormattedPrayerTimes({
