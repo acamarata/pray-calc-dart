@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Prayer times are now host-timezone-independent. `getTimes` normalizes the
+  caller's `date` to a stable UTC-noon reference (`DateTime.utc(y, m, d, 12)`)
+  before passing it to `getSpa` and all astronomical calculations. Previously,
+  a local `DateTime(2024, 3, 15)` in a UTC+12 zone would reach `getSpa` as
+  UTC March 14, shifting all times by one civil day.
+
 ## [1.0.0] - 2026-05-25
 
 ### Added

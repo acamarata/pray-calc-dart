@@ -68,6 +68,8 @@ TwilightAngles getAngles(
   double pressure = 1013.25,
 }) {
   // 1. Solar ephemeris at UTC noon of the given date.
+  //    date.year/month/day are read without TZ conversion so they reflect the
+  //    caller's expressed civil date for both local and UTC DateTime inputs.
   final noonDate = DateTime.utc(date.year, date.month, date.day, 12, 0, 0);
   final jd = toJulianDate(noonDate);
   final eph = solarEphemeris(jd);

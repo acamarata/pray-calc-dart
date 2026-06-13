@@ -33,9 +33,17 @@ PrayerTimes getTimes(
   double pressure = 1013.25,
   bool hanafi = false,
 }) {
+  // Normalize to a stable UTC-noon DateTime for this civil calendar date.
+  // Reading date.year/month/day directly (without TZ conversion) preserves
+  // the caller's expressed date regardless of whether they passed a local or
+  // UTC DateTime. Constructing UTC noon removes host-timezone influence from
+  // every downstream Julian-Day computation and aligns getSpa with the
+  // Meeus/MSC calculations (which all need the same civil date).
+  final civDate = DateTime.utc(date.year, date.month, date.day, 12, 0, 0);
+
   // 1. Compute dynamic twilight angles.
   final tw = getAngles(
-    date,
+    civDate,
     lat,
     lng,
     elevation: elevation,
@@ -49,8 +57,11 @@ PrayerTimes getTimes(
   final ishaZenith = 90 + tw.ishaAngle;
 
   // 3. Run SPA for solar position + custom twilight times.
+  //    Pass civDate (UTC noon) so SPA receives a deterministic UTC instant
+  //    and the date component it extracts (via date.toUtc()) is always the
+  //    intended civil day, independent of host timezone.
   final spaData = getSpa(
-    date,
+    civDate,
     lat,
     lng,
     tz,
@@ -70,9 +81,8 @@ PrayerTimes getTimes(
   final dhuhrTime = noonTime + 2.5 / 60;
 
   // 4. Solar declination for Asr (Meeus formula, accurate to ~0.01°).
-  final jd = toJulianDate(
-    DateTime.utc(date.year, date.month, date.day, 12, 0, 0),
-  );
+  //    civDate already is UTC noon of the civil date.
+  final jd = toJulianDate(civDate);
   final eph = solarEphemeris(jd);
 
   // 5. Asr time.

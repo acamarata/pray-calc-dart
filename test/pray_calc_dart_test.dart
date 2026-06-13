@@ -190,4 +190,57 @@ void main() {
       expect(result.angles[0].sunset, lessThan(result.angles[1].sunset));
     });
   });
+
+  group('UTC day-boundary regression — civil-date consistency', () {
+    // getTimes normalizes the input date to UTC noon of the expressed civil
+    // date before passing it to getSpa and all astronomical calculations.
+    // This ensures that a local DateTime and a UTC DateTime that both express
+    // "March 15" (via their .year/.month/.day fields) produce identical prayer
+    // times, regardless of what the host machine timezone is.
+
+    test('local DateTime and UTC noon for same civil date produce identical times', () {
+      // Both express 2024-03-15: local midnight and UTC noon share year/month/day = 2024/3/15
+      final local = DateTime(2024, 3, 15);
+      final utcNoon = DateTime.utc(2024, 3, 15, 12, 0, 0);
+
+      final timesLocal = getTimes(local, 40.7128, -74.0060, -5.0);
+      final timesNoon = getTimes(utcNoon, 40.7128, -74.0060, -5.0);
+
+      // After normalization both resolve to the same UTC noon reference point
+      expect(timesNoon.fajr, closeTo(timesLocal.fajr, 0.0001));
+      expect(timesNoon.sunrise, closeTo(timesLocal.sunrise, 0.0001));
+      expect(timesNoon.dhuhr, closeTo(timesLocal.dhuhr, 0.0001));
+      expect(timesNoon.asr, closeTo(timesLocal.asr, 0.0001));
+      expect(timesNoon.maghrib, closeTo(timesLocal.maghrib, 0.0001));
+      expect(timesNoon.isha, closeTo(timesLocal.isha, 0.0001));
+    });
+
+    test('UTC midnight and UTC noon for same civil date produce identical times', () {
+      final utcMidnight = DateTime.utc(2024, 3, 15, 0, 0, 0);
+      final utcNoon = DateTime.utc(2024, 3, 15, 12, 0, 0);
+
+      final timesMid = getTimes(utcMidnight, 40.7128, -74.0060, -5.0);
+      final timesNoon = getTimes(utcNoon, 40.7128, -74.0060, -5.0);
+
+      expect(timesNoon.fajr, closeTo(timesMid.fajr, 0.0001));
+      expect(timesNoon.sunrise, closeTo(timesMid.sunrise, 0.0001));
+      expect(timesNoon.dhuhr, closeTo(timesMid.dhuhr, 0.0001));
+      expect(timesNoon.asr, closeTo(timesMid.asr, 0.0001));
+      expect(timesNoon.maghrib, closeTo(timesMid.maghrib, 0.0001));
+      expect(timesNoon.isha, closeTo(timesMid.isha, 0.0001));
+    });
+
+    test('angles are identical for local vs UTC noon for the same civil date', () {
+      final local = DateTime(2024, 6, 15);
+      final utcNoon = DateTime.utc(2024, 6, 15, 12, 0, 0);
+
+      // getAngles receives civDate (already UTC noon from getTimes) but can
+      // also be called directly — test that same civil date gives same angles.
+      final anglesLocal = getAngles(local, 40.7128, -74.0060);
+      final anglesUtcNoon = getAngles(utcNoon, 40.7128, -74.0060);
+
+      expect(anglesUtcNoon.fajrAngle, closeTo(anglesLocal.fajrAngle, 0.001));
+      expect(anglesUtcNoon.ishaAngle, closeTo(anglesLocal.ishaAngle, 0.001));
+    });
+  });
 }
