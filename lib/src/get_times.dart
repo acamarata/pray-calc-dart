@@ -11,6 +11,7 @@ import 'solar_ephemeris.dart';
 import 'angles.dart';
 import 'asr.dart';
 import 'qiyam.dart';
+import 'high_latitude.dart';
 
 /// Compute prayer times for a given date and location.
 ///
@@ -23,6 +24,11 @@ import 'qiyam.dart';
 /// [pressure] is atmospheric pressure in mbar/hPa (default: 1013.25).
 /// [hanafi] selects Asr convention: false = Shafi'i/Maliki/Hanbali (default),
 /// true = Hanafi.
+/// [highLatitudeRule] decides what to do when Fajr or Isha has no observable time
+/// (high summer above ~48.5 degrees, or the polar circles). Defaults to
+/// [HighLatitudeRule.none]: report them absent and let the caller decide. Any other
+/// rule SUBSTITUTES a juristic time; check [PrayerTimes.provenance] to see which times
+/// were supplied rather than solved.
 PrayerTimes getTimes(
   DateTime date,
   double lat,
@@ -32,6 +38,7 @@ PrayerTimes getTimes(
   double temperature = 15,
   double pressure = 1013.25,
   bool hanafi = false,
+  HighLatitudeRule highLatitudeRule = HighLatitudeRule.none,
 }) {
   // Normalize to a stable UTC-noon DateTime for this civil calendar date.
   // Reading date.year/month/day directly (without TZ conversion) preserves
@@ -88,19 +95,47 @@ PrayerTimes getTimes(
   // 5. Asr time.
   final asrTime = getAsr(noonTime, lat, eph.decl, hanafi: hanafi);
 
-  // 6. Qiyam al-Layl (last third of the night).
-  final qiyamTime = getQiyam(fajrTime, ishaTime);
+  // 6. High-latitude substitution. Astronomically solved times pass through untouched;
+  //    only genuinely absent ones are supplied, and only by the requested rule.
+  final highLat = applyHighLatitudeRule(
+    HighLatitudeContext(
+      rule: highLatitudeRule,
+      date: date,
+      lat: lat,
+      lng: lng,
+      fajrAngle: tw.fajrAngle,
+      ishaAngle: tw.ishaAngle,
+      // Resolving another day or latitude must not recurse into the rule itself.
+      resolveDay: (d, resolveLat, resolveLng) {
+        final r = getTimes(
+          d, resolveLat, resolveLng, tz,
+          elevation: elevation, temperature: temperature, pressure: pressure,
+          hanafi: hanafi, highLatitudeRule: HighLatitudeRule.none,
+        );
+        return ResolvedDay(fajr: r.fajr, isha: r.isha, noon: r.noon);
+      },
+    ),
+    fajrTime,
+    ishaTime,
+    sunriseTime,
+    maghribTime,
+  );
+
+  // 7. Qiyam al-Layl follows from the resolved Fajr/Isha, so an enabled rule carries
+  //    through to it as well.
+  final qiyamTime = getQiyam(highLat.fajr, highLat.isha);
 
   return PrayerTimes(
     qiyam: qiyamTime.isFinite ? qiyamTime : double.nan,
-    fajr: fajrTime.isFinite ? fajrTime : double.nan,
+    fajr: highLat.fajr.isFinite ? highLat.fajr : double.nan,
     sunrise: sunriseTime.isFinite ? sunriseTime : double.nan,
     noon: noonTime.isFinite ? noonTime : double.nan,
     dhuhr: dhuhrTime.isFinite ? dhuhrTime : double.nan,
     asr: asrTime.isFinite ? asrTime : double.nan,
     maghrib: maghribTime.isFinite ? maghribTime : double.nan,
-    isha: ishaTime.isFinite ? ishaTime : double.nan,
+    isha: highLat.isha.isFinite ? highLat.isha : double.nan,
     angles: tw,
+    provenance: highLat.provenance,
   );
 }
 
