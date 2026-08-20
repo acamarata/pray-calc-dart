@@ -52,6 +52,60 @@ Fixed-angle methods (ISNA 15 degrees, MWL 18 degrees) produce inaccurate Fajr ti
 
 Result: approximately 18 degrees at the equator, approximately 12-14 degrees at 50-55 degrees N in summer. Matches observational data from the Moonsighting Committee Worldwide.
 
+
+## High latitudes
+
+Above roughly 48.5 degrees the sun stops reaching 18 degrees below the horizon in summer,
+and inside the polar circles it stops rising or setting at all for weeks. There is then no
+observable dawn or nightfall, so Fajr and Isha have no calculable time.
+
+By default this package reports them as absent (`double.nan`, formatted `"N/A"`) rather
+than substituting a value, because every substitution is a juristic position rather than
+an astronomical result:
+
+```dart
+final t = getTimes(DateTime.utc(2026, 6, 21), 78.22334, 15.64689, 1.0);
+// t.fajr.isNaN == true
+// t.provenance.fajr == TimeSource.unavailable
+// t.dhuhr and t.asr are still real times
+```
+
+Six opt-in rules are available via `highLatitudeRule`:
+
+| Rule | Needs a real sunset | Covers the polar circles |
+|---|---|---|
+| `none` (default) | no | reports absent |
+| `middleOfNight` | yes | no |
+| `oneSeventh` | yes | no |
+| `angleBased` | yes | no |
+| `aqrabAlBilad` (nearest latitude, 45th parallel) | no | yes |
+| `aqrabAlAyyam` (nearest date) | no | yes |
+
+```dart
+final t = getTimes(
+  DateTime.utc(2026, 6, 21), 78.22334, 15.64689, 1.0,
+  highLatitudeRule: HighLatitudeRule.aqrabAlBilad,
+);
+// t.provenance.fajr == TimeSource.aqrabAlBilad
+```
+
+The three night-proportion rules divide the span between sunset and sunrise, so inside the
+polar circles they have nothing to measure and correctly decline to invent a time. Only
+the two nearest-substitution rules cover those latitudes.
+
+`provenance` names the origin of Fajr and Isha on every result, so a substituted time is
+never mistaken for a computed one.
+
+Dhuhr and Asr remain available every day at every latitude: the sun crosses the local
+meridian even on days it never rises. Inside the polar circles during winter that crossing
+happens below the horizon, so those times are astronomically real but not observable.
+
+### Twilight angle range
+
+The dynamic angle is clamped to 10-22 degrees. Above roughly 70 degrees it sits at the
+10-degree floor, outside the latitude span the Moonsighting Committee data was fitted to.
+Treat results there as the edge of the model's validated range.
+
 ## Compatibility
 
 Dart SDK 3.7.0+. Works in Flutter (iOS, Android, Web, Desktop), Dart CLI, and server-side Dart. Single dependency: [nrel_spa](https://pub.dev/packages/nrel_spa).
