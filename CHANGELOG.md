@@ -1,3 +1,30 @@
+## 1.1.0
+
+### Added
+- **High-latitude rules for Fajr and Isha**, opt-in via the `highLatitudeRule` named
+  argument on `getTimes`. Six options: `none` (default), `middleOfNight`, `oneSeventh`,
+  `angleBased`, `aqrabAlBilad` (nearest latitude, the 45th parallel) and `aqrabAlAyyam`
+  (nearest date with an observable sign). The default substitutes nothing: past the
+  geometric limit every answer is a juristic position rather than a calculation, and a
+  library that picks one silently is issuing a ruling on the caller's behalf.
+- **`provenance` on every result**, naming the origin of `fajr` and `isha` as `observed`,
+  the rule that supplied it, or `unavailable`.
+
+### Fixed
+- Requires `nrel_spa` >= 1.1.0, which stops the NREL `-99999` sentinel from reaching
+  callers. With earlier versions an unreachable time arrived as a finite number and passed
+  every `isFinite` guard.
+- `dhuhr` and `asr` are now available every day at every latitude, following the
+  `solarNoon` recovery in nrel_spa 1.1.0. At Longyearbyen on 2026-06-21 the package
+  previously returned nothing at all; it now returns Dhuhr 12:01:43 and Asr 18:07:51 with
+  Fajr, Sunrise, Maghrib and Isha correctly absent.
+
+### Notes
+- The three night-proportion rules divide the span between sunset and sunrise, so inside
+  the polar circles they have nothing to measure and correctly decline. Only
+  `aqrabAlBilad` and `aqrabAlAyyam` cover those latitudes.
+- Output verified byte-identical to the JS `pray-calc` package to 9 decimal places.
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
