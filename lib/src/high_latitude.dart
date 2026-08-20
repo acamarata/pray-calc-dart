@@ -81,12 +81,17 @@ class ResolvedDay {
   final double isha;
   final double noon;
 
-  const ResolvedDay({required this.fajr, required this.isha, required this.noon});
+  const ResolvedDay({
+    required this.fajr,
+    required this.isha,
+    required this.noon,
+  });
 }
 
 /// Recomputes a day at arbitrary coordinates/date. Supplied by the caller so this
 /// library stays free of a circular import back into getTimes.
-typedef DayResolver = ResolvedDay Function(DateTime date, double lat, double lng);
+typedef DayResolver =
+    ResolvedDay Function(DateTime date, double lat, double lng);
 
 /// Inputs the rules need beyond the times themselves.
 class HighLatitudeContext {
@@ -170,7 +175,11 @@ double _applyNightPortion(
 /// observer borrows from 45 degrees south, matching their season.
 ResolvedDay _applyAqrabAlBilad(HighLatitudeContext ctx) {
   final sign = ctx.lat < 0 ? -1.0 : 1.0;
-  final fallbackLat = sign * (ctx.lat.abs() < kAqrabAlBiladLatitude ? ctx.lat.abs() : kAqrabAlBiladLatitude);
+  final fallbackLat =
+      sign *
+      (ctx.lat.abs() < kAqrabAlBiladLatitude
+          ? ctx.lat.abs()
+          : kAqrabAlBiladLatitude);
   return ctx.resolveDay(ctx.date, fallbackLat, ctx.lng);
 }
 
@@ -190,7 +199,11 @@ ResolvedDay _applyAqrabAlAyyam(HighLatitudeContext ctx) {
 
   final baseNoon = today.noon;
   if (!_isUsable(baseNoon)) {
-    return const ResolvedDay(fajr: double.nan, isha: double.nan, noon: double.nan);
+    return const ResolvedDay(
+      fajr: double.nan,
+      isha: double.nan,
+      noon: double.nan,
+    );
   }
 
   for (var delta = 1; delta <= _kAqrabAlAyyamMaxSearchDays; delta++) {
@@ -262,8 +275,20 @@ HighLatitudeResult applyHighLatitudeRule(
       suppliedFajr = r.fajr;
       suppliedIsha = r.isha;
     default:
-      suppliedFajr = _applyNightPortion(ctx.rule, sunrise, maghrib, ctx.fajrAngle, isFajr: true);
-      suppliedIsha = _applyNightPortion(ctx.rule, sunrise, maghrib, ctx.ishaAngle, isFajr: false);
+      suppliedFajr = _applyNightPortion(
+        ctx.rule,
+        sunrise,
+        maghrib,
+        ctx.fajrAngle,
+        isFajr: true,
+      );
+      suppliedIsha = _applyNightPortion(
+        ctx.rule,
+        sunrise,
+        maghrib,
+        ctx.ishaAngle,
+        isFajr: false,
+      );
   }
 
   final resolvedFajr = fajrObserved ? fajr : suppliedFajr;

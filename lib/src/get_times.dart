@@ -108,9 +108,15 @@ PrayerTimes getTimes(
       // Resolving another day or latitude must not recurse into the rule itself.
       resolveDay: (d, resolveLat, resolveLng) {
         final r = getTimes(
-          d, resolveLat, resolveLng, tz,
-          elevation: elevation, temperature: temperature, pressure: pressure,
-          hanafi: hanafi, highLatitudeRule: HighLatitudeRule.none,
+          d,
+          resolveLat,
+          resolveLng,
+          tz,
+          elevation: elevation,
+          temperature: temperature,
+          pressure: pressure,
+          hanafi: hanafi,
+          highLatitudeRule: HighLatitudeRule.none,
         );
         return ResolvedDay(fajr: r.fajr, isha: r.isha, noon: r.noon);
       },
