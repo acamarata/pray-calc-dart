@@ -1,6 +1,8 @@
 /// Core types for pray_calc_dart.
 library;
 
+import 'high_latitude.dart';
+
 /// Asr shadow convention: Shafi'i (1x) or Hanafi (2x).
 enum AsrConvention { shafii, hanafi }
 
@@ -47,6 +49,14 @@ class PrayerTimes {
   /// Dynamic twilight angles used for this calculation.
   final TwilightAngles angles;
 
+  /// Origin of [fajr] and [isha]: observed when solved from the sun's actual position,
+  /// the rule name when a high-latitude substitution supplied it, or unavailable when
+  /// no observable time exists and no rule was able to supply one.
+  ///
+  /// Check this before presenting a time as a calculation: above the polar circles a
+  /// substituted value is a juristic choice, not an astronomical result.
+  final TimeProvenance provenance;
+
   const PrayerTimes({
     required this.qiyam,
     required this.fajr,
@@ -57,6 +67,7 @@ class PrayerTimes {
     required this.maghrib,
     required this.isha,
     required this.angles,
+    required this.provenance,
   });
 }
 
@@ -89,6 +100,9 @@ class FormattedPrayerTimes {
   /// Dynamic twilight angles used for this calculation.
   final TwilightAngles angles;
 
+  /// Origin of [fajr] and [isha] — see [PrayerTimes.provenance].
+  final TimeProvenance provenance;
+
   const FormattedPrayerTimes({
     required this.qiyam,
     required this.fajr,
@@ -99,6 +113,7 @@ class FormattedPrayerTimes {
     required this.maghrib,
     required this.isha,
     required this.angles,
+    required this.provenance,
   });
 }
 
