@@ -143,6 +143,32 @@ void main() {
       expect(r.isha >= 0 && r.isha < 24, isTrue);
     });
 
+    test('Fajr always precedes Isha, every rule, all year, every latitude', () {
+      // Guards the wrap regression: substituted times were forced into [0, 24) while the
+      // observed path leaves a post-midnight Isha above 24, which put Isha BEFORE Fajr on
+      // 158 days a year at Longyearbyen under aqrabAlAyyam alone.
+      final places = [
+        ('Longyearbyen', 78.22334, 15.64689, 2.0),
+        ('Tromso', 69.6492, 18.9553, 2.0),
+        ('Helsinki', 60.1733, 24.941, 3.0),
+        ('London', 51.5074, -0.1278, 1.0),
+      ];
+      for (final (name, lat, lng, tz) in places) {
+        for (final rule in HighLatitudeRule.values) {
+          for (var i = 0; i < 365; i++) {
+            final d = DateTime.utc(2026, 1, 1).add(Duration(days: i));
+            final r = getTimes(d, lat, lng, tz, highLatitudeRule: rule);
+            if (!r.fajr.isFinite || !r.isha.isFinite) continue;
+            expect(
+              r.isha > r.fajr,
+              isTrue,
+              reason: '$name ${rule.name} $d: isha ${r.isha} <= fajr ${r.fajr}',
+            );
+          }
+        }
+      }
+    });
+
     test('both nearest-substitution rules cover every day of the year', () {
       for (final rule in [
         HighLatitudeRule.aqrabAlBilad,

@@ -131,7 +131,14 @@ class HighLatitudeResult {
 
 bool _isUsable(double value) => value.isFinite;
 
-double _wrap24(double v) => _isUsable(v) ? ((v % 24) + 24) % 24 : double.nan;
+/// Times are fractional hours from midnight of the requested civil date, and are
+/// deliberately NOT wrapped into [0, 24).
+///
+/// The observed path already works this way: at Helsinki in mid-May `getTimes` returns an
+/// Isha of 24.163, meaning 00:09 the next morning. Wrapping a substituted time into the
+/// same day instead put Isha *before* Fajr, which is exactly the "times are out of order"
+/// symptom that makes a polar timetable look broken. Leaving it un-wrapped keeps
+/// Fajr < Isha true by construction and leaves the day-rollover to the caller.
 
 /// Fraction of the night to offset from sunset/sunrise for the night-proportion rules.
 /// Returns NaN for rules that are not night proportions.
@@ -164,7 +171,7 @@ double _applyNightPortion(
   final maghribUnwrapped = maghrib < sunrise ? maghrib + 24 : maghrib;
   final nightLength = 24 - (maghribUnwrapped - sunrise);
   final offset = portion * nightLength;
-  return _wrap24(isFajr ? sunrise - offset : maghribUnwrapped + offset);
+  return isFajr ? sunrise - offset : maghribUnwrapped + offset;
 }
 
 /// Aqrab al-Bilad — nearest location. Recompute the same date at the 45th parallel,
@@ -222,7 +229,9 @@ ResolvedDay _applyAqrabAlAyyam(HighLatitudeContext ctx) {
     if (_isUsable(fajr) && _isUsable(isha)) break;
   }
 
-  return ResolvedDay(fajr: _wrap24(fajr), isha: _wrap24(isha), noon: baseNoon);
+  // Un-wrapped by design: probe.fajr < probe.noon < probe.isha, so carrying both across as
+  // offsets from this day's noon preserves fajr < isha even when isha lands past midnight.
+  return ResolvedDay(fajr: fajr, isha: isha, noon: baseNoon);
 }
 
 /// Supply Fajr and Isha where the sun provides no observable time.

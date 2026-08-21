@@ -3,7 +3,7 @@ description: >
   Islamic prayer times for Dart and Flutter. Pure Dart port of the pray-calc
   library implementing the MCW seasonal model and dynamic twilight angles.
   Uses nrel_spa for the NREL Solar Position Algorithm.
-version: 1.1.0
+version: 1.1.1
 homepage: https://github.com/acamarata/pray-calc-dart
 repository: https://github.com/acamarata/pray-calc-dart
 issue_tracker: https://github.com/acamarata/pray-calc-dart/issues

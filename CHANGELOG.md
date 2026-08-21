@@ -1,3 +1,8 @@
+## 1.1.1
+
+### Fixed
+- **Substituted `fajr`/`isha` are no longer wrapped into [0, 24), which could put Isha before Fajr.** The observed path already returns a post-midnight Isha as e.g. `24.163` (00:09 the next morning) and never wraps; the high-latitude substitution paths did, so a supplied Isha landed at the start of the same day and sorted ahead of Fajr. At Longyearbyen under `aqrabAlAyyam` that affected 158 days a year, and every night-proportion rule was affected too. Substituted times now follow the same convention as computed ones, so `fajr < isha` holds by construction.
+
 ## 1.1.0
 
 ### Added
