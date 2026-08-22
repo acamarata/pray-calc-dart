@@ -1,3 +1,10 @@
+## 1.2.1
+
+### Changed
+- **The library doc no longer estimates parity with the TypeScript port; it states what is enforced.** The old wording, "accurate to within 1 second of the reference pray-calc TypeScript library", was an estimate that had never been checked. When the two ports were finally measured against each other they disagreed on 128 fields — by up to 40 seconds on Fajr and two and a half minutes on Asr. Output is now identical, and `test/parity_test.dart` holds it there with 282 exact-match vectors.
+
+  Documentation only. No behaviour change.
+
 ## 1.2.0
 
 ### Added
