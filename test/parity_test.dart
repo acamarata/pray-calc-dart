@@ -30,8 +30,9 @@ HighLatitudeRule _ruleFrom(String name) =>
 
 void main() {
   final file = File('test/fixtures/cross_language_golden.json');
-  final vectors = (jsonDecode(file.readAsStringSync()) as List)
-      .cast<Map<String, dynamic>>();
+  final vectors =
+      (jsonDecode(file.readAsStringSync()) as List)
+          .cast<Map<String, dynamic>>();
 
   test('fixture is present and non-trivial', () {
     expect(vectors.length, greaterThan(250));
@@ -81,7 +82,11 @@ void main() {
           'Midnight',
         ];
         for (var i = 0; i < labels.length; i++) {
-          expect(actualTimes[i], expectedTimes[i], reason: '${labels[i]} at $label');
+          expect(
+            actualTimes[i],
+            expectedTimes[i],
+            reason: '${labels[i]} at $label',
+          );
         }
 
         final expectedAngles = (v['a'] as List).cast<num>();
@@ -97,8 +102,16 @@ void main() {
         );
 
         final expectedProv = (v['p'] as List).cast<String>();
-        expect(r.provenance.fajr.name, expectedProv[0], reason: 'Fajr source at $label');
-        expect(r.provenance.isha.name, expectedProv[1], reason: 'Isha source at $label');
+        expect(
+          r.provenance.fajr.name,
+          expectedProv[0],
+          reason: 'Fajr source at $label',
+        );
+        expect(
+          r.provenance.isha.name,
+          expectedProv[1],
+          reason: 'Isha source at $label',
+        );
 
         final expectedMethods = (v['M'] as Map).cast<String, dynamic>();
         expect(

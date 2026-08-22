@@ -132,17 +132,14 @@ PrayerTimesAll getTimesAll(
       // Moonsighting Committee: seasonal minute offsets from sunrise/sunset.
       final mscFajrMin = getMscFajr(civDate, lat);
       final mscIshaMin = getMscIsha(civDate, lat);
-      methodFajr = sunriseTime.isFinite
-          ? sunriseTime - mscFajrMin / 60
-          : double.nan;
-      methodIsha = maghribTime.isFinite
-          ? maghribTime + mscIshaMin / 60
-          : double.nan;
+      methodFajr =
+          sunriseTime.isFinite ? sunriseTime - mscFajrMin / 60 : double.nan;
+      methodIsha =
+          maghribTime.isFinite ? maghribTime + mscIshaMin / 60 : double.nan;
     } else if (m.ishaMinutes != null) {
       // Fixed-minute Isha (Umm Al-Qura and Qatar: 90 minutes after sunset).
-      methodIsha = maghribTime.isFinite
-          ? maghribTime + m.ishaMinutes! / 60
-          : double.nan;
+      methodIsha =
+          maghribTime.isFinite ? maghribTime + m.ishaMinutes! / 60 : double.nan;
     } else {
       methodIsha = spaData.angles[base + 1].sunset;
     }

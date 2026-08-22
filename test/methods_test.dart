@@ -31,9 +31,10 @@ void main() {
       // The ordering is by Fajr angle for the angle-based methods. UAQ (18.5) and Qatar
       // (18) sit adjacent instead, because they are the two fixed-minute Isha methods and
       // are grouped as a pair — so a strict angle sort over the whole table does not hold.
-      final angled = kMethods
-          .where((m) => m.fajrAngle != null && m.ishaMinutes == null)
-          .toList();
+      final angled =
+          kMethods
+              .where((m) => m.fajrAngle != null && m.ishaMinutes == null)
+              .toList();
       for (var i = 1; i < angled.length; i++) {
         expect(
           angled[i].fajrAngle!,
@@ -43,22 +44,32 @@ void main() {
       }
 
       final ids = kMethods.map((m) => m.id).toList();
-      expect(ids.indexOf('Qatar') - ids.indexOf('UAQ'), 1,
-          reason: 'the fixed-minute methods are listed as an adjacent pair');
+      expect(
+        ids.indexOf('Qatar') - ids.indexOf('UAQ'),
+        1,
+        reason: 'the fixed-minute methods are listed as an adjacent pair',
+      );
     });
 
     test('every method specifies exactly one way of reaching Isha', () {
       for (final m in kMethods) {
-        final ways = [m.ishaAngle != null, m.ishaMinutes != null, m.useMsc].where((x) => x);
+        final ways = [
+          m.ishaAngle != null,
+          m.ishaMinutes != null,
+          m.useMsc,
+        ].where((x) => x);
         expect(ways, hasLength(1), reason: '${m.id} must pick one Isha model');
       }
     });
 
-    test('the two fixed-minute methods are Umm Al-Qura and Qatar, both at 90 minutes', () {
-      final fixed = kMethods.where((m) => m.ishaMinutes != null).toList();
-      expect(fixed.map((m) => m.id), unorderedEquals(['UAQ', 'Qatar']));
-      expect(fixed.every((m) => m.ishaMinutes == 90), isTrue);
-    });
+    test(
+      'the two fixed-minute methods are Umm Al-Qura and Qatar, both at 90 minutes',
+      () {
+        final fixed = kMethods.where((m) => m.ishaMinutes != null).toList();
+        expect(fixed.map((m) => m.id), unorderedEquals(['UAQ', 'Qatar']));
+        expect(fixed.every((m) => m.ishaMinutes == 90), isTrue);
+      },
+    );
 
     test('Tehran/Jafari is absent — it is outside this package\'s scope', () {
       final ids = kMethods.map((m) => m.id.toLowerCase()).join(' ');
@@ -110,7 +121,11 @@ void main() {
     test('is absent when Fajr is absent and no rule was asked for', () {
       final t = getTimes(DateTime.utc(2024, 6, 21), 78.2233, 15.6469, 1);
       expect(t.fajr.isNaN, isTrue, reason: 'polar day: no observable dawn');
-      expect(t.midnight.isNaN, isTrue, reason: 'no Fajr means no midpoint to take');
+      expect(
+        t.midnight.isNaN,
+        isTrue,
+        reason: 'no Fajr means no midpoint to take',
+      );
     });
   });
 
@@ -138,14 +153,23 @@ void main() {
       // Every angle-based method, sorted by depth, must produce a monotonically earlier
       // dawn. This is the check that catches a mis-indexed zenith list, which would
       // otherwise look plausible.
-      final angled = kMethods.where((m) => m.fajrAngle != null && !m.useMsc).toList()
-        ..sort((a, b) => a.fajrAngle!.compareTo(b.fajrAngle!));
+      final angled =
+          kMethods.where((m) => m.fajrAngle != null && !m.useMsc).toList()
+            ..sort((a, b) => a.fajrAngle!.compareTo(b.fajrAngle!));
       double? previous;
       for (final m in angled) {
         final f = r.methods[m.id]!.fajr;
-        expect(f.isFinite, isTrue, reason: '${m.id} should reach dawn in NYC in June');
+        expect(
+          f.isFinite,
+          isTrue,
+          reason: '${m.id} should reach dawn in NYC in June',
+        );
         if (previous != null) {
-          expect(f, lessThanOrEqualTo(previous), reason: '${m.id} at ${m.fajrAngle}');
+          expect(
+            f,
+            lessThanOrEqualTo(previous),
+            reason: '${m.id} at ${m.fajrAngle}',
+          );
         }
         previous = f;
       }
@@ -182,7 +206,11 @@ void main() {
         highLatitudeRule: HighLatitudeRule.aqrabAlBilad,
       );
 
-      expect(polar.fajr.isFinite, isTrue, reason: 'the rule supplies the primary Fajr');
+      expect(
+        polar.fajr.isFinite,
+        isTrue,
+        reason: 'the rule supplies the primary Fajr',
+      );
       expect(polar.provenance.fajr, TimeSource.aqrabAlBilad);
 
       for (final m in kMethods.where((m) => m.fajrAngle != null)) {
@@ -203,7 +231,12 @@ void main() {
 
       // In December at the same place there is no sunrise, but there is a computable
       // sunset-relative Isha at a latitude where the sun does clear the horizon.
-      final winter = getTimesAll(DateTime.utc(2024, 9, 15), 78.2233, 15.6469, 1);
+      final winter = getTimesAll(
+        DateTime.utc(2024, 9, 15),
+        78.2233,
+        15.6469,
+        1,
+      );
       expect(winter.maghrib.isFinite, isTrue);
       expect(winter.methods['UAQ']!.isha, closeTo(winter.maghrib + 1.5, 1e-9));
     });
@@ -213,7 +246,17 @@ void main() {
     test('renders every time as HH:MM:SS', () {
       final f = calcTimes(DateTime.utc(2024, 6, 21), 40.7128, -74.006, -4);
       final pattern = RegExp(r'^\d{2}:\d{2}:\d{2}$');
-      for (final s in [f.qiyam, f.fajr, f.sunrise, f.noon, f.dhuhr, f.asr, f.maghrib, f.isha, f.midnight]) {
+      for (final s in [
+        f.qiyam,
+        f.fajr,
+        f.sunrise,
+        f.noon,
+        f.dhuhr,
+        f.asr,
+        f.maghrib,
+        f.isha,
+        f.midnight,
+      ]) {
         expect(s, matches(pattern));
       }
     });
@@ -267,10 +310,28 @@ void main() {
     test('the time of day in the input never changes the answer', () {
       // Prayer times belong to a calendar date, not to an instant. Passing midnight,
       // noon and late evening of the same day must give byte-identical output.
-      final a = calcTimesAll(DateTime.utc(2024, 3, 20, 0), 40.7128, -74.006, -4);
-      final b = calcTimesAll(DateTime.utc(2024, 3, 20, 12), 40.7128, -74.006, -4);
-      final c = calcTimesAll(DateTime.utc(2024, 3, 20, 23, 59), 40.7128, -74.006, -4);
-      for (final pair in [[a, b], [a, c]]) {
+      final a = calcTimesAll(
+        DateTime.utc(2024, 3, 20, 0),
+        40.7128,
+        -74.006,
+        -4,
+      );
+      final b = calcTimesAll(
+        DateTime.utc(2024, 3, 20, 12),
+        40.7128,
+        -74.006,
+        -4,
+      );
+      final c = calcTimesAll(
+        DateTime.utc(2024, 3, 20, 23, 59),
+        40.7128,
+        -74.006,
+        -4,
+      );
+      for (final pair in [
+        [a, b],
+        [a, c],
+      ]) {
         expect(pair[1].fajr, pair[0].fajr);
         expect(pair[1].isha, pair[0].isha);
         expect(pair[1].asr, pair[0].asr);
