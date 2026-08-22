@@ -11,6 +11,8 @@ import 'solar_ephemeris.dart';
 import 'angles.dart';
 import 'asr.dart';
 import 'qiyam.dart';
+import 'midnight.dart';
+import 'constants.dart';
 import 'high_latitude.dart';
 
 /// Compute prayer times for a given date and location.
@@ -84,8 +86,8 @@ PrayerTimes getTimes(
   final maghribTime = spaData.sunset;
   final ishaTime = spaData.angles[1].sunset;
 
-  // Dhuhr: 2.5 minutes after solar noon.
-  final dhuhrTime = noonTime + 2.5 / 60;
+  // Dhuhr: a small buffer after solar noon (see kDhuhrOffsetMinutes).
+  final dhuhrTime = noonTime + kDhuhrOffsetMinutes / 60;
 
   // 4. Solar declination for Asr (Meeus formula, accurate to ~0.01°).
   //    civDate already is UTC noon of the civil date.
@@ -131,6 +133,9 @@ PrayerTimes getTimes(
   //    through to it as well.
   final qiyamTime = getQiyam(highLat.fajr, highLat.isha);
 
+  // 8. Islamic midnight: midpoint between Maghrib and the resolved Fajr.
+  final midnightTime = getMidnight(maghribTime, highLat.fajr);
+
   return PrayerTimes(
     qiyam: qiyamTime.isFinite ? qiyamTime : double.nan,
     fajr: highLat.fajr.isFinite ? highLat.fajr : double.nan,
@@ -140,6 +145,7 @@ PrayerTimes getTimes(
     asr: asrTime.isFinite ? asrTime : double.nan,
     maghrib: maghribTime.isFinite ? maghribTime : double.nan,
     isha: highLat.isha.isFinite ? highLat.isha : double.nan,
+    midnight: midnightTime.isFinite ? midnightTime : double.nan,
     angles: tw,
     provenance: highLat.provenance,
   );

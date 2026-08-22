@@ -7,6 +7,12 @@ library;
 
 export 'src/types.dart';
 export 'src/get_times.dart';
+export 'src/get_times_all.dart';
+export 'src/calc_times.dart';
+export 'src/calc_times_all.dart';
+export 'src/methods.dart';
+export 'src/midnight.dart';
+export 'src/constants.dart';
 export 'src/angles.dart';
 export 'src/solar_ephemeris.dart';
 export 'src/msc.dart';

@@ -30,8 +30,35 @@ void main() {
   print('Maghrib: ${formatTime(times.maghrib)}');
   print('Isha:    ${formatTime(times.isha)}');
   print('Qiyam:   ${formatTime(times.qiyam)}');
+
+  // Or get them already formatted.
+  final f = calcTimes(date, 40.7128, -74.0060, -5.0);
+  print('Isha: ${f.isha}  Midnight: ${f.midnight}');
 }
 ```
+
+### Comparing against a specific authority
+
+The default is the dynamic method. When you need to match a published timetable, ask for
+every method at once and pick the one you need:
+
+```dart
+final all = calcTimesAll(DateTime(2024, 3, 15), 40.7128, -74.0060, -5.0);
+
+print(all.fajr);                 // dynamic method
+print(all.methods['MWL']![0]);   // Muslim World League Fajr
+print(all.methods['ISNA']![1]);  // ISNA Isha
+
+for (final m in kMethods) {
+  print('${m.id.padRight(8)} ${m.name}');
+}
+```
+
+A method that cannot reach its depression angle where and when you asked reports `'N/A'`
+rather than a substituted time — above roughly 48.5 degrees the sun stops reaching 18
+degrees below the horizon in summer, so an 18-degree method simply has no answer there.
+That is the point of the map: it shows you which methods are applicable. To get a
+displayable time in those conditions, use `highLatitudeRule` with the primary times.
 
 ## API
 
@@ -41,8 +68,14 @@ Full API documentation, guides, and examples are in the [wiki](https://github.co
 
 | Function | Description |
 | --- | --- |
-| `getTimes(date, lat, lng, tz, {...})` | All prayer times for a date and location |
+| `getTimes(date, lat, lng, tz, {...})` | All prayer times for a date and location, as fractional hours |
+| `calcTimes(date, lat, lng, tz, {...})` | The same, formatted as `HH:MM:SS` strings |
+| `getTimesAll(date, lat, lng, tz, {...})` | Adds a comparison entry for all fourteen traditional methods |
+| `calcTimesAll(date, lat, lng, tz, {...})` | The same, formatted as `HH:MM:SS` strings |
+| `kMethods` | The method table: id, name, region, angles |
 | `getAngles(date, lat, lng, {...})` | Dynamic Fajr/Isha depression angles |
+| `getMidnight(maghrib, fajr)` | Midpoint of the night |
+| `applyHighLatitudeRule(...)` | Fajr/Isha substitution where no observable time exists |
 | `getSpa(date, lat, lng, tz, {...})` | NREL Solar Position Algorithm (re-export) |
 | `formatTime(hours)` | Fractional hours to `HH:MM:SS` string |
 

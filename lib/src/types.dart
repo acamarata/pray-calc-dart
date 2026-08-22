@@ -46,6 +46,10 @@ class PrayerTimes {
   /// Isha (nightfall, end of shafaq).
   final double isha;
 
+  /// Islamic midnight: the midpoint between Maghrib and Fajr. Commonly used as the
+  /// endpoint of the Isha window.
+  final double midnight;
+
   /// Dynamic twilight angles used for this calculation.
   final TwilightAngles angles;
 
@@ -66,6 +70,7 @@ class PrayerTimes {
     required this.asr,
     required this.maghrib,
     required this.isha,
+    required this.midnight,
     required this.angles,
     required this.provenance,
   });
@@ -97,6 +102,9 @@ class FormattedPrayerTimes {
   /// Isha (nightfall, end of shafaq), as HH:MM:SS.
   final String isha;
 
+  /// Islamic midnight, as HH:MM:SS.
+  final String midnight;
+
   /// Dynamic twilight angles used for this calculation.
   final TwilightAngles angles;
 
@@ -112,6 +120,7 @@ class FormattedPrayerTimes {
     required this.asr,
     required this.maghrib,
     required this.isha,
+    required this.midnight,
     required this.angles,
     required this.provenance,
   });
@@ -136,3 +145,114 @@ class SolarEphemeris {
 }
 
 // SpaResult and SpaAnglesResult are provided by the nrel_spa package.
+
+/// One method's comparison result: its Fajr and Isha for the requested day.
+///
+/// A method whose depression angle the sun never reaches on this date reports NaN rather
+/// than a substituted value. That is deliberate: the comparison map exists to show which
+/// methods are applicable where, so a method with no answer must keep saying so. Use
+/// [PrayerTimes.fajr]/[PrayerTimes.isha] with a [HighLatitudeRule] when you need a time
+/// to display.
+class MethodEntry {
+  /// Fajr in fractional hours, or NaN when this method cannot reach dawn today.
+  final double fajr;
+
+  /// Isha in fractional hours, or NaN when this method cannot reach nightfall today.
+  final double isha;
+
+  const MethodEntry(this.fajr, this.isha);
+
+  @override
+  String toString() => 'MethodEntry($fajr, $isha)';
+}
+
+/// Dynamic-method prayer times plus a comparison entry for every supported method.
+class PrayerTimesAll {
+  /// Qiyam al-Layl (last third of the night).
+  final double qiyam;
+
+  /// Fajr (dawn).
+  final double fajr;
+
+  /// Sunrise, and the end of the Fajr window.
+  final double sunrise;
+
+  /// Solar noon (transit).
+  final double noon;
+
+  /// Dhuhr (just after solar transit).
+  final double dhuhr;
+
+  /// Asr (afternoon).
+  final double asr;
+
+  /// Maghrib (sunset).
+  final double maghrib;
+
+  /// Isha (nightfall).
+  final double isha;
+
+  /// Islamic midnight (midpoint between Maghrib and Fajr).
+  final double midnight;
+
+  /// Dynamic twilight angles used for the primary times.
+  final TwilightAngles angles;
+
+  /// Origin of Fajr and Isha — see [PrayerTimes.provenance].
+  final TimeProvenance provenance;
+
+  /// Comparison results keyed by method id (`'MWL'`, `'ISNA'`, ...).
+  final Map<String, MethodEntry> methods;
+
+  const PrayerTimesAll({
+    required this.qiyam,
+    required this.fajr,
+    required this.sunrise,
+    required this.noon,
+    required this.dhuhr,
+    required this.asr,
+    required this.maghrib,
+    required this.isha,
+    required this.midnight,
+    required this.angles,
+    required this.provenance,
+    required this.methods,
+  });
+}
+
+/// [PrayerTimesAll] with every time rendered as an HH:MM:SS string.
+class FormattedPrayerTimesAll {
+  final String qiyam;
+  final String fajr;
+  final String sunrise;
+  final String noon;
+  final String dhuhr;
+  final String asr;
+  final String maghrib;
+  final String isha;
+  final String midnight;
+
+  /// Dynamic twilight angles used for the primary times.
+  final TwilightAngles angles;
+
+  /// Origin of Fajr and Isha — see [PrayerTimes.provenance].
+  final TimeProvenance provenance;
+
+  /// Formatted comparison times per method: `[fajrString, ishaString]`.
+  final Map<String, List<String>> methods;
+
+  const FormattedPrayerTimesAll({
+    required this.qiyam,
+    required this.fajr,
+    required this.sunrise,
+    required this.noon,
+    required this.dhuhr,
+    required this.asr,
+    required this.maghrib,
+    required this.isha,
+    required this.midnight,
+    required this.angles,
+    required this.provenance,
+    required this.methods,
+  });
+}
